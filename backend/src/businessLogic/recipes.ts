@@ -1,33 +1,37 @@
-import { PlanItem } from '../models/PlanItem';
-import {PlanAccess} from '../dataAccessLayer/planAccess';
-import {CreatePlanRequest} from '../requests/CreatePlanRequest';
+import { RecipeItem } from '../models/RecipeItem';
+import {RecipeAccess} from '../dataAccessLayer/recipeAccess';
+import {CreateRecipeRequest} from '../requests/CreateRecipeRequest';
 // import {UpdatePlanRequest} from '../requests/UpdatePlanRequest';
-//import * as uuid from 'uuid';
-const planAccess = new PlanAccess();
+import * as uuid from 'uuid';
+const planAccess = new RecipeAccess();
 import { createLogger } from '../utils/logger';
 const logger = createLogger('logic');
 
-export async function getPlansForUser(userId: string): Promise<PlanItem[]> {
-    logger.info('plan access');
-    return planAccess.getPlansForUser(userId);
+// export async function getPlansForUser(userId: string): Promise<RecipeItem[]> {
+//     logger.info('plan access');
+//     return planAccess.getPlansForUser(userId);
+// }
+
+export async function getAllRecipes(): Promise<RecipeItem[]> {
+  logger.info('all recipes');
+  return planAccess.getAllRecipes();
 }
 
 // export async function userExists(userId: string): Promise<Boolean> {
 //     return todoAccess.userExists(userId);
 // }
 
-export async function createPlan(CreatePlanRequest: CreatePlanRequest, userId: string): Promise<PlanItem> {
-   // const weekId = uuid.v4();
-   // logger.info(weekId);
-   logger.info(CreatePlanRequest);
+export async function addRecipe(CreateRecipeRequest: CreateRecipeRequest, userId: string): Promise<RecipeItem> {
+   const recipeId = uuid.v4();
+   logger.info(CreateRecipeRequest);
    logger.info(userId);
-    return await planAccess.createPlan({
+    return await planAccess.addRecipe({
     userId: userId,
-    weekId: CreatePlanRequest.weekId,
-    achieved: 0,   
-    weekDay: CreatePlanRequest.weekDay,
-    target: CreatePlanRequest.target,
-    activities: CreatePlanRequest.activities
+    recipeId: recipeId,
+    likes: 0,   
+    title: CreateRecipeRequest.title,
+    category: CreateRecipeRequest.category,
+    description: CreateRecipeRequest.description
   });
 }
 

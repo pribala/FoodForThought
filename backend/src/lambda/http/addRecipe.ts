@@ -2,22 +2,22 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
-import { CreatePlanRequest } from '../../requests/CreatePlanRequest'
+import { CreateRecipeRequest } from '../../requests/CreateRecipeRequest'
 
 //import {getUserId} from '../utils';
 import { createLogger } from '../../utils/logger';
-import { createPlan } from '../../businessLogic/weeklyplan';
+import { addRecipe } from '../../businessLogic/recipes';
 const logger = createLogger('plan');
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const newPlan: CreatePlanRequest = JSON.parse(event.body)
+  const newRecipe: CreateRecipeRequest = JSON.parse(event.body)
   // const userId = getUserId(event);
  // logger.info(userId);
   // TODO: Implement creating a new plan item
-  logger.info('Create a new plan item: ', event);
-  logger.info(newPlan);
+  logger.info('Create a new recipe item: ', event);
+  logger.info(newRecipe);
   const userId = 'test';
-  const newItem = await createPlan(newPlan, userId);
+  const newItem = await addRecipe(newRecipe, userId);
   logger.info(newItem);
   return {
     statusCode: 201,

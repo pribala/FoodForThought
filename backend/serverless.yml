@@ -43,6 +43,7 @@ functions:
       - Effect: Allow
         Action:
          - dynamodb:Query
+         - dynamodb:Scan
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}
       - Effect: Allow
         Action:

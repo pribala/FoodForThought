@@ -1,15 +1,14 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import * as AWS from 'aws-sdk';
-// import * as AWSXRay from 'aws-xray-sdk';
 const AWSXRay = require('aws-xray-sdk');
-import { PlanItem } from '../models/PlanItem';
+import { RecipeItem } from '../models/RecipeItem';
 import { createLogger } from '../utils/logger';
 const logger = createLogger('data');
 const XAWS = AWSXRay.captureAWS(AWS);
-export class PlanAccess {
+export class RecipeAccess {
     constructor(
         private readonly docClient: DocumentClient = createDynamodbClient(),
-        private readonly weeklyPlanTable = process.env.WEEKLY_PLANNER_TABLE,
+        private readonly recipeTable = process.env.RECIPE_COLLECTION_TABLE,
        // private readonly planIndex = process.env.PLANNER_INDEX,
        // private readonly bucketName = process.env.IMAGES_S3_BUCKET,
         // private readonly expirationTime = process.env.SIGNED_URL_EXPIRATION
@@ -27,30 +26,40 @@ export class PlanAccess {
     //     return items as TodoItem[];
     // }
 
-    async createPlan(planItem: PlanItem): Promise<PlanItem> {
-        logger.info('Creating new plan item.');
-        logger.info(this.weeklyPlanTable);
+    async addRecipe(recipeItem: RecipeItem): Promise<RecipeItem> {
+        logger.info('Creating new recipe item.');
+        logger.info(this.recipeTable);
         await this.docClient.put({
-            TableName: this.weeklyPlanTable,
-            Item: planItem
+            TableName: this.recipeTable,
+            Item: recipeItem
         }).promise();
 
-        return planItem as PlanItem;
+        return recipeItem as RecipeItem;
     }
 
-    async getPlansForUser(userId: string): Promise<PlanItem[]> {
-        logger.info('getPlansForUser', 'userId:', userId, 'table',this.weeklyPlanTable);
-        const result = await this.docClient.query({
-          TableName: this.weeklyPlanTable,
-          KeyConditionExpression: 'userId = :userId',
-          ExpressionAttributeValues: {
-            ':userId': userId
-          },
-          ScanIndexForward: false
+    // async getPlansForUser(userId: string): Promise<PlanItem[]> {
+    //     logger.info('getPlansForUser', 'userId:', userId, 'table',this.weeklyPlanTable);
+    //     const result = await this.docClient.query({
+    //       TableName: this.weeklyPlanTable,
+    //       KeyConditionExpression: 'userId = :userId',
+    //       ExpressionAttributeValues: {
+    //         ':userId': userId
+    //       },
+    //       ScanIndexForward: false
+    //     }).promise();
+      
+    //     logger.info('Plan for a user', result.Items);
+    //     return result.Items as PlanItem[];
+    // }
+
+    async getAllRecipes(): Promise<RecipeItem[]> {
+        logger.info('getAllRecipes');
+        const result = await this.docClient.scan({
+          TableName: this.recipeTable,
         }).promise();
       
-        logger.info('Plan for a user', result.Items);
-        return result.Items as PlanItem[];
+        logger.info('All recipes', result.Items);
+        return result.Items as RecipeItem[];
     }
 
     // async  userExists(userId: string): Promise<Boolean> {
