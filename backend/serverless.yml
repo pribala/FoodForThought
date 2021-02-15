@@ -79,7 +79,7 @@ functions:
           authorizer: Auth
           #request:
             #schema:
-              #application/json: ${file(src/models/create-todo-model.json)}
+              #application/json: ${file(src/models/create-recipe-model.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -99,7 +99,7 @@ resources:
         RestApiId: 
           Ref: ApiGatewayRestApi
 
-    WeeklyPlannerDynamoDBTable:
+    RecipeCollectionDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:

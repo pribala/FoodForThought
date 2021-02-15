@@ -3,6 +3,7 @@ import { History } from 'history'
 import Auth from '../auth/Auth'
 import { Recipe } from '../types/Recipe'
 import { getRecipes } from '../api/recipes-api'
+import  { AddRecipe }  from './AddRecipe'
 import {
     Button,
     Checkbox,
@@ -45,49 +46,51 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
         } catch (e) {
             alert(`Failed to fetch todos: ${e.message}`)
         }
-    }  
-  render() {
-    return (
-      <div>
-        <Header as="h1">Recipes</Header>
-         {this.renderRecipes()}
-      </div>
-    )
-  }
-
-  renderRecipes() {
-    if (this.state.loadingRecipes) {
-      return this.renderLoading()
+    } 
+    
+    render() {
+      return (
+        <div>
+          <Header as="h1">Recipes</Header>
+          <AddRecipe/>
+          {this.renderRecipes()}
+        </div>
+      )
     }
 
-    return this.renderTodosList()
-  }
+    renderRecipes() {
+      if (this.state.loadingRecipes) {
+        return this.renderLoading()
+      }
 
-  renderLoading() {
-    return (
-      <Grid.Row>
-        <Loader indeterminate active inline="centered">
-          Loading Recipes
-        </Loader>
-      </Grid.Row>
-    )
-  }
+      return this.renderTodosList()
+    }
 
-  renderTodosList() {
-    return (
-        <div>
-            {this.state.recipes.map((recipe, pos) => {
-                return (
-                    <Card key={recipe.recipeId}>
-                        <CardHeader>{recipe.title}
-                            <CardContent>
-                                {recipe.description}
-                            </CardContent>
-                        </CardHeader>
-                    </Card>
-                )
-            })}
-        </div>
-    )
-  }
+    renderLoading() {
+      return (
+        <Grid.Row>
+          <Loader indeterminate active inline="centered">
+            Loading Recipes
+          </Loader>
+        </Grid.Row>
+      )
+    }
+
+    renderTodosList() {
+      return (
+          <div>
+              {this.state.recipes.map((recipe, pos) => {
+                  return (
+                      <Card key={recipe.recipeId}>
+                          <CardHeader>{recipe.title}
+                              <CardContent>
+                                  {recipe.description}
+                              </CardContent>
+                          </CardHeader>
+                      </Card>
+                  )
+              })}
+          </div>
+      )
+    }
 }    
