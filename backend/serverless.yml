@@ -27,8 +27,8 @@ provider:
 
 functions:
 
-  # Auth:
-  #   handler: src/lambda/auth/auth0Authorizer.handler
+  Auth:
+    handler: src/lambda/auth/auth0Authorizer.handler
 
   # Retrieve data
   GetAllRecipes:
@@ -36,8 +36,8 @@ functions:
     events:
       - http:
           method: get
-          path: plan
-          #authorizer: Auth
+          path: allrecipes
+          authorizer: Auth
           cors: true
     iamRoleStatements:
       - Effect: Allow
@@ -50,15 +50,33 @@ functions:
          - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}/index/${self:provider.environment.RECIPE_INDEX}     
   
-  # Create a plan:
+  GetUserRecipes:
+    handler: src/lambda/http/getUserRecipes.handler
+    events:
+      - http:
+          method: get 
+          path: userrecipes
+          authorizer: Auth
+          cors: true
+    iamRolesStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb: Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}/index/${self:provider.environment.RECIPE_INDEX}              
+  
+  # Add a recipe:
   AddRecipe:
     handler: src/lambda/http/addRecipe.handler
     events:
       - http:
           method: post
-          path: plan
+          path: recipes
           cors: true
-          #authorizer: Auth
+          authorizer: Auth
           #request:
             #schema:
               #application/json: ${file(src/models/create-todo-model.json)}

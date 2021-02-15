@@ -9,7 +9,7 @@ export class RecipeAccess {
     constructor(
         private readonly docClient: DocumentClient = createDynamodbClient(),
         private readonly recipeTable = process.env.RECIPE_COLLECTION_TABLE,
-       // private readonly planIndex = process.env.PLANNER_INDEX,
+        private readonly recipeIndex = process.env.RECIPE_INDEX,
        // private readonly bucketName = process.env.IMAGES_S3_BUCKET,
         // private readonly expirationTime = process.env.SIGNED_URL_EXPIRATION
     ) {
@@ -37,20 +37,20 @@ export class RecipeAccess {
         return recipeItem as RecipeItem;
     }
 
-    // async getPlansForUser(userId: string): Promise<PlanItem[]> {
-    //     logger.info('getPlansForUser', 'userId:', userId, 'table',this.weeklyPlanTable);
-    //     const result = await this.docClient.query({
-    //       TableName: this.weeklyPlanTable,
-    //       KeyConditionExpression: 'userId = :userId',
-    //       ExpressionAttributeValues: {
-    //         ':userId': userId
-    //       },
-    //       ScanIndexForward: false
-    //     }).promise();
+    async getUserRecipes(userId: string): Promise<RecipeItem[]> {
+        logger.info('getUserRecipes');
+        const result = await this.docClient.query({
+          TableName: this.recipeTable,
+          KeyConditionExpression: 'userId = :userId',
+          ExpressionAttributeValues: {
+            ':userId': userId
+          },
+          ScanIndexForward: false
+        }).promise();
       
-    //     logger.info('Plan for a user', result.Items);
-    //     return result.Items as PlanItem[];
-    // }
+        logger.info('Recipes for a user', result.Items);
+        return result.Items as RecipeItem[];
+    }
 
     async getAllRecipes(): Promise<RecipeItem[]> {
         logger.info('getAllRecipes');

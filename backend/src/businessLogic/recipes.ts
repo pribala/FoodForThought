@@ -7,10 +7,10 @@ const planAccess = new RecipeAccess();
 import { createLogger } from '../utils/logger';
 const logger = createLogger('logic');
 
-// export async function getPlansForUser(userId: string): Promise<RecipeItem[]> {
-//     logger.info('plan access');
-//     return planAccess.getPlansForUser(userId);
-// }
+export async function getUserRecipes(userId: string): Promise<RecipeItem[]> {
+    logger.info('recipes for user');
+    return planAccess.getUserRecipes(userId);
+}
 
 export async function getAllRecipes(): Promise<RecipeItem[]> {
   logger.info('all recipes');
