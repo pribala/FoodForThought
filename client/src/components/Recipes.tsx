@@ -3,7 +3,6 @@ import { History } from 'history'
 import Auth from '../auth/Auth'
 import { Recipe } from '../types/Recipe'
 import { getRecipes } from '../api/recipes-api'
-import  { AddRecipe }  from './AddRecipe'
 import {
     Button,
     Checkbox,
@@ -52,8 +51,7 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
       return (
         <div>
           <Header as="h1">Recipes</Header>
-          <AddRecipe/>
-          {this.renderRecipes()}
+           {this.renderRecipes()}
         </div>
       )
     }
@@ -63,7 +61,7 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
         return this.renderLoading()
       }
 
-      return this.renderTodosList()
+      return this.renderRecipeList()
     }
 
     renderLoading() {
@@ -76,21 +74,28 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
       )
     }
 
-    renderTodosList() {
+    renderRecipeList() {
       return (
-          <div>
-              {this.state.recipes.map((recipe, pos) => {
-                  return (
-                      <Card key={recipe.recipeId}>
-                          <CardHeader>{recipe.title}
-                              <CardContent>
-                                  {recipe.description}
-                              </CardContent>
-                          </CardHeader>
-                      </Card>
-                  )
-              })}
-          </div>
-      )
-    }
+        <Card.Group itemsPerRow={3}>
+        {this.state.recipes.map((recipe, pos) => {
+          return (
+            <Card  raised  key={recipe.recipeId}>
+              <Card.Content>
+                <Card.Header>{recipe.title}</Card.Header>
+                <Card.Description>
+                  {recipe.description}
+                </Card.Description>
+              </Card.Content>
+              <Card.Content extra>
+                <Icon name='thumbs up' color='red' />
+                  {recipe.likes} Likes
+              </Card.Content>
+            </Card>
+          )
+        })
+     
+      }
+      </Card.Group>
+    )
+  }
 }    

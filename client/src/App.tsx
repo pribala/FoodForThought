@@ -3,7 +3,7 @@ import { Link, Route, Router, Switch } from 'react-router-dom'
 import { Grid, Menu, Segment } from 'semantic-ui-react'
 
 import Auth from './auth/Auth'
-// import { EditTodo } from './components/EditTodo'
+import { UserRecipes } from './components/UserRecipes'
 import { LogIn } from './components/LogIn'
 import { NotFound } from './components/NotFound'
 import { Recipes } from './components/Recipes'
@@ -59,7 +59,12 @@ export default class App extends Component<AppProps, AppState> {
         <Menu.Item name="home">
           <Link to="/">Home</Link>
         </Menu.Item>
-
+        { this.props.auth.isAuthenticated() ? 
+          <Menu.Item name="cookbook">
+            <Link to="/myrecipes">My Cookbook</Link>
+          </Menu.Item> : null
+        }
+    
         <Menu.Menu position="right">{this.logInLogOutButton()}</Menu.Menu>
       </Menu>
     )
@@ -95,7 +100,13 @@ export default class App extends Component<AppProps, AppState> {
             return <Recipes {...props} auth={this.props.auth} />
           }}
         />
-
+        <Route
+          path="/myrecipes"
+          exact
+          render={props => {
+            return <UserRecipes {...props} auth={this.props.auth} />
+          }}
+        />
         <Route
           path="/recipes/:recipeId/edit"
           exact

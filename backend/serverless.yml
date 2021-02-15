@@ -58,10 +58,10 @@ functions:
           path: userrecipes
           authorizer: Auth
           cors: true
-    iamRolesStatements:
+    iamRoleStatements:
       - Effect: Allow
         Action:
-          - dynamodb: Query
+          - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}
       - Effect: Allow
         Action:

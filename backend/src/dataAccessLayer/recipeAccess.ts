@@ -15,17 +15,8 @@ export class RecipeAccess {
     ) {
 
     }
-
-    // async getAllToDos(): Promise<PlanItem[]> {
-    //     logger.info('Getting all to do list items.');
-    //     const result = await this.docClient.scan({
-    //         TableName: this.todoListTable
-    //     }).promise();
-
-    //     const items = result.Items;
-    //     return items as TodoItem[];
-    // }
-
+    
+    // add a new recipe
     async addRecipe(recipeItem: RecipeItem): Promise<RecipeItem> {
         logger.info('Creating new recipe item.');
         logger.info(this.recipeTable);
@@ -37,6 +28,7 @@ export class RecipeAccess {
         return recipeItem as RecipeItem;
     }
 
+    // get recipes for the logged in user
     async getUserRecipes(userId: string): Promise<RecipeItem[]> {
         logger.info('getUserRecipes');
         const result = await this.docClient.query({
@@ -52,6 +44,7 @@ export class RecipeAccess {
         return result.Items as RecipeItem[];
     }
 
+    // get all recipes
     async getAllRecipes(): Promise<RecipeItem[]> {
         logger.info('getAllRecipes');
         const result = await this.docClient.scan({
@@ -61,18 +54,6 @@ export class RecipeAccess {
         logger.info('All recipes', result.Items);
         return result.Items as RecipeItem[];
     }
-
-    // async  userExists(userId: string): Promise<Boolean> {
-    //     const result = await this.docClient.get({
-    //         TableName: this.todoListTable,
-    //         Key: {
-    //         userId: userId
-    //         } 
-    //     }).promise();
-    
-    //     logger.info('Check if user is valid.', result);
-    //     return !!result.Item;
-    // }
 
     // async updateTodo(todoItem: TodoItem): Promise<TodoItem> {
     //     logger.info('Updating an existing to do item.');
@@ -114,20 +95,21 @@ export class RecipeAccess {
     //     return result.Count != 0;
     // }
 
-    // async deleteTodoItem(userId: string, todoId: string): Promise<TodoItem> {
-    //     logger.info(todoId);
-    //     logger.info(userId);
-    //     const result = await this.docClient.delete({
-    //         TableName: this.todoListTable,
-    //         Key:  {
-    //           userId: userId,
-    //           todoId: todoId
-    //         },
-    //     }).promise();
+    // delete a recipe
+    async deleteRecipe(userId: string, recipeId: string): Promise<RecipeItem> {
+        logger.info(recipeId);
+        logger.info(userId);
+        const result = await this.docClient.delete({
+            TableName: this.recipeTable,
+            Key:  {
+              userId: userId,
+              recipeId: recipeId
+            },
+        }).promise();
     
-    //     logger.info('Delete a to do.', result);
-    //     return result[0] as TodoItem;
-    // }
+        logger.info('Delete a to do.', result);
+        return result[0] as RecipeItem;
+    }
 
     // async generateUrl(todoId: string, userId: string) {
     //     const url = this.getUploadUrl(todoId)

@@ -4,19 +4,18 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 
 import { CreateRecipeRequest } from '../../requests/CreateRecipeRequest'
 
-//import {getUserId} from '../utils';
+import {getUserId} from '../utils';
 import { createLogger } from '../../utils/logger';
 import { addRecipe } from '../../businessLogic/recipes';
 const logger = createLogger('plan');
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const newRecipe: CreateRecipeRequest = JSON.parse(event.body)
-  // const userId = getUserId(event);
- // logger.info(userId);
-  // TODO: Implement creating a new plan item
+  const userId = getUserId(event);
+  logger.info(userId);
+  // Implement creating a new recipe
   logger.info('Create a new recipe item: ', event);
   logger.info(newRecipe);
-  const userId = 'test';
   const newItem = await addRecipe(newRecipe, userId);
   logger.info(newItem);
   return {

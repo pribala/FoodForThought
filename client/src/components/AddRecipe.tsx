@@ -1,34 +1,53 @@
 import React from 'react';  
 import ReactDOM from 'react-dom'; 
+import { History } from 'history';
+import Auth from '../auth/Auth';
+import { addRecipe } from '../api/recipes-api';
 import {
     Button,
     Input,
     TextArea,
     Select,
     Form,
-    TextAreaProps
+    TextAreaProps,
+    DropdownProps
   } from 'semantic-ui-react'
 
 const categoryOptions = [
-    { key: 'veg', value: 'veg', text: 'Vegetarian' },
-    { key: 'vgn', value: 'vgn', text: 'Vegan' },
-    { key: 'ple', value: 'ple', text: 'Paleo' },
-    { key: 'nvg', value: 'nvg', text: 'Non-Vegetarian' },
-    { key: 'glf', value: 'glf', text: 'Gluten-Free' },
+    { key: 'veg', value: 'vegetarian', text: 'Vegetarian' },
+    { key: 'vgn', value: 'vegan', text: 'Vegan' },
+    { key: 'ple', value: 'paleo', text: 'Paleo' },
+    { key: 'nvg', value: 'non-vegetarian', text: 'Non-Vegetarian' },
+    { key: 'glf', value: 'gluten-free', text: 'Gluten-Free' },
   ]  
 
-
-interface AddRecipeState {
+interface AddRecipeProps {
+    auth: Auth
+    history: History
 }  
+interface AddRecipeState {
+    title: string
+    category: string | number | boolean | (string | number | boolean)[] | undefined
+    description: string | number | undefined
+}
 
-export class AddRecipe extends React.Component {
-    state = {
+export class AddRecipe extends React.PureComponent<AddRecipeProps, AddRecipeState> {
+    state: AddRecipeState = {
         title: '',
         category: '',
         description: ''
     }
-    addRecipeHandler = (data: any) => {
-        console.log(data)
+    handleSubmit = async (event: React.SyntheticEvent) => {
+        event.preventDefault()
+        try {
+            const newRecipe = await addRecipe(this.props.auth.getIdToken(), {
+              title: this.state.title,
+              category: this.state.category,
+              description: this.state.description,
+            })
+        } catch {
+            alert('Recipe creation failed')
+        }
     }
 
     handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,8 +62,9 @@ export class AddRecipe extends React.Component {
         console.log(this.state)
     }
 
-    handleCategoryChange = (event:React.SyntheticEvent<HTMLElement, Event>) => {
-        
+    handleCategoryChange = (event: React.SyntheticEvent<HTMLElement>, data: DropdownProps) => {
+        console.log(data.value)
+        this.setState({category: data.value})
     }
     render() {
         return (
@@ -61,7 +81,7 @@ export class AddRecipe extends React.Component {
                     <label>Description</label>
                     <TextArea placeholder='Recipe...' style={{ minHeight: 100 }} onChange={this.handleDesChange}/>
                 </Form.Field>
-            <Button type='submit' onClick={this.addRecipeHandler}>Submit</Button>
+            <Button type='submit' onClick={this.handleSubmit}>Submit</Button>
           </Form>
           
         );

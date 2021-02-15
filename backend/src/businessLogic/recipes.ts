@@ -3,18 +3,18 @@ import {RecipeAccess} from '../dataAccessLayer/recipeAccess';
 import {CreateRecipeRequest} from '../requests/CreateRecipeRequest';
 // import {UpdatePlanRequest} from '../requests/UpdatePlanRequest';
 import * as uuid from 'uuid';
-const planAccess = new RecipeAccess();
+const recipeAccess = new RecipeAccess();
 import { createLogger } from '../utils/logger';
 const logger = createLogger('logic');
 
 export async function getUserRecipes(userId: string): Promise<RecipeItem[]> {
     logger.info('recipes for user');
-    return planAccess.getUserRecipes(userId);
+    return recipeAccess.getUserRecipes(userId);
 }
 
 export async function getAllRecipes(): Promise<RecipeItem[]> {
   logger.info('all recipes');
-  return planAccess.getAllRecipes();
+  return recipeAccess.getAllRecipes();
 }
 
 // export async function userExists(userId: string): Promise<Boolean> {
@@ -25,7 +25,7 @@ export async function addRecipe(CreateRecipeRequest: CreateRecipeRequest, userId
    const recipeId = uuid.v4();
    logger.info(CreateRecipeRequest);
    logger.info(userId);
-    return await planAccess.addRecipe({
+    return await recipeAccess.addRecipe({
     userId: userId,
     recipeId: recipeId,
     likes: 0,   
@@ -49,9 +49,9 @@ export async function addRecipe(CreateRecipeRequest: CreateRecipeRequest, userId
 //     return todoAccess.itemExists(todoId, userId);
 // }
 
-// export async function deleteTodoItem(userId: string, todoId: string): Promise<TodoItem> {
-//     return todoAccess.deleteTodoItem(userId, todoId);
-// }
+export async function deleteRecipe(userId: string, recipeId: string): Promise<RecipeItem> {
+    return recipeAccess.deleteRecipe(userId, recipeId);
+}
 
 // export async function generateUrl(todoId: string, userId: string): Promise<string> {
 //     return todoAccess.generateUrl(todoId, userId);
