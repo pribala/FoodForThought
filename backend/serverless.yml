@@ -85,6 +85,22 @@ functions:
         Action:
           - dynamodb:PutItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}
+
+  # Delete a recipe
+  DeleteRecipe:
+    handler: src/lambda/http/deleteRecipe.handler
+    events:
+      - http:
+          method: delete
+          path: recipes/{recipeId}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}  
+        
 resources:
   Resources:
     # Add any necessary AWS resources
