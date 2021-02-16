@@ -76,6 +76,7 @@ export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
     } 
 
     onEditButtonClick = (recipeId: string) => {
+        console.log(recipeId);
         this.props.history.push(`/recipes/${recipeId}/edit`)
     }
 
@@ -148,6 +149,9 @@ export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
                 return (
                 
                 <Card raised key={recipe.recipeId}>
+                    {recipe.recipeUrl && (
+                       <Image src={recipe.recipeUrl} fluid />
+                    )}
                     <Card.Content>
                         <Card.Header>{recipe.title}</Card.Header>
                         <Card.Description>

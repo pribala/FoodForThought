@@ -72,6 +72,7 @@ export async function getUploadUrl(
   idToken: string,
   recipeId: string
 ): Promise<string> {
+  console.log(recipeId)
   const response = await Axios.post(`${apiEndpoint}/recipes/${recipeId}/attachment`, '', {
     headers: {
       'Content-Type': 'application/json',

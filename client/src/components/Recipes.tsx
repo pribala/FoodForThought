@@ -80,6 +80,9 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
         {this.state.recipes.map((recipe, pos) => {
           return (
             <Card  raised  key={recipe.recipeId}>
+              {recipe.recipeUrl && (
+                <Image src={recipe.recipeUrl} fluid />
+              )}
               <Card.Content>
                 <Card.Header>{recipe.title}</Card.Header>
                 <Card.Description>

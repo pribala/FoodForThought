@@ -23,7 +23,7 @@ interface EditRecipeState {
   uploadState: UploadState
 }
 
-export class EditTodo extends React.PureComponent<
+export class EditRecipe extends React.PureComponent<
   EditRecipeProps,
   EditRecipeState
 > {

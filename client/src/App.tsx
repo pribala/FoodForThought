@@ -7,7 +7,7 @@ import { UserRecipes } from './components/UserRecipes'
 import { LogIn } from './components/LogIn'
 import { NotFound } from './components/NotFound'
 import { Recipes } from './components/Recipes'
-
+import { EditRecipe } from './components/EditRecipe'
 // export interface AppProps {}
 
 export interface AppProps {
@@ -111,7 +111,7 @@ export default class App extends Component<AppProps, AppState> {
           path="/recipes/:recipeId/edit"
           exact
           render={props => {
-            return null//<EditTodo {...props} auth={this.props.auth} />
+            return <EditRecipe {...props} auth={this.props.auth} />
           }}
         />
 

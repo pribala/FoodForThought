@@ -17,10 +17,6 @@ export async function getAllRecipes(): Promise<RecipeItem[]> {
   return recipeAccess.getAllRecipes();
 }
 
-// export async function userExists(userId: string): Promise<Boolean> {
-//     return todoAccess.userExists(userId);
-// }
-
 export async function addRecipe(CreateRecipeRequest: CreateRecipeRequest, userId: string): Promise<RecipeItem> {
    const recipeId = uuid.v4();
    logger.info(CreateRecipeRequest);
@@ -45,18 +41,11 @@ export async function addRecipe(CreateRecipeRequest: CreateRecipeRequest, userId
 //    });
 //  }
 
-// export async function itemExists(todoId: string, userId: string): Promise<Boolean> {
-//     return todoAccess.itemExists(todoId, userId);
-// }
-
 export async function deleteRecipe(userId: string, recipeId: string): Promise<RecipeItem> {
     return recipeAccess.deleteRecipe(userId, recipeId);
 }
 
-// export async function generateUrl(todoId: string, userId: string): Promise<string> {
-//     return todoAccess.generateUrl(todoId, userId);
-// }
+export async function generateUrl(recipeId: string, userId: string): Promise<string> {
+    return recipeAccess.generateUrl(recipeId, userId);
+}
 
-// export async function addImage(todoId: string, userId: string): Promise<string> {
-//     return await todoAccess.generateUrl(todoId, userId);
-// }

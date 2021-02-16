@@ -10,8 +10,8 @@ export class RecipeAccess {
         private readonly docClient: DocumentClient = createDynamodbClient(),
         private readonly recipeTable = process.env.RECIPE_COLLECTION_TABLE,
         private readonly recipeIndex = process.env.RECIPE_INDEX,
-       // private readonly bucketName = process.env.IMAGES_S3_BUCKET,
-        // private readonly expirationTime = process.env.SIGNED_URL_EXPIRATION
+        private readonly bucketName = process.env.IMAGES_S3_BUCKET,
+        private readonly expirationTime = process.env.SIGNED_URL_EXPIRATION
     ) {
 
     }
@@ -111,37 +111,37 @@ export class RecipeAccess {
         return result[0] as RecipeItem;
     }
 
-    // async generateUrl(todoId: string, userId: string) {
-    //     const url = this.getUploadUrl(todoId)
-    //     // add url to the todo
-    //     const attachmentUrl: string = 'https://' + this.bucketName + '.s3.amazonaws.com/' + todoId
-    //         const options = {
-    //             TableName: this.todoListTable,
-    //             Key: {
-    //                 userId: userId,
-    //                 todoId: todoId
-    //             },
-    //             UpdateExpression: "set attachmentUrl = :r",
-    //             ExpressionAttributeValues: {
-    //                 ":r": attachmentUrl
-    //             },
-    //             ReturnValues: "UPDATED_NEW"
-    //         };
-    //         await this.docClient.update(options).promise()
-    //         return url
-    // }
+    async generateUrl(recipeId: string, userId: string) {
+        const url = this.getUploadUrl(recipeId)
+        // add url to the recipe
+        const recipeUrl: string = 'https://' + this.bucketName + '.s3.amazonaws.com/' + recipeId
+            const options = {
+                TableName: this.recipeTable,
+                Key: {
+                    userId: userId,
+                    recipeId: recipeId
+                },
+                UpdateExpression: "set recipeUrl = :r",
+                ExpressionAttributeValues: {
+                    ":r": recipeUrl
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
+            await this.docClient.update(options).promise()
+            return url
+    }
 
-    // async getUploadUrl(todoId: string) {
-    //     logger.info('Generate signed URL');
-    //     const s3 = new XAWS.S3({
-    //         signatureVersion: 'v4'
-    //     })
-    //     return s3.getSignedUrl('putObject', {
-    //         Bucket: this.bucketName,
-    //         Key: todoId,
-    //         Expires: this.expirationTime
-    //     })
-    // }
+    async getUploadUrl(recipeId: string) {
+        logger.info('Generate signed URL');
+        const s3 = new XAWS.S3({
+            signatureVersion: 'v4'
+        })
+        return s3.getSignedUrl('putObject', {
+            Bucket: this.bucketName,
+            Key: recipeId,
+            Expires: parseInt(this.expirationTime)
+        })
+    }
 }
 
 function createDynamodbClient() {
