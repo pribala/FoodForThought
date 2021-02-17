@@ -110,7 +110,7 @@ export default class App extends Component<AppProps, AppState> {
           path="/recipes/:recipeId/edit"
           exact
           render={props => {
-            return <EditRecipe {...props} auth={this.props.auth} />
+            return <EditRecipe {...props} history= {this.props.history} auth={this.props.auth} />
           }}
         />
 

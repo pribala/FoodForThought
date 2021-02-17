@@ -16,6 +16,7 @@ interface EditRecipeProps {
     }
   }
   auth: Auth
+  history: any
 }
 
 interface EditRecipeState {
@@ -61,6 +62,7 @@ export class EditRecipe extends React.PureComponent<
       alert('Could not upload a file: ' + e.message)
     } finally {
       this.setUploadState(UploadState.NoUpload)
+      this.props.history.goBack();
     }
   }
 

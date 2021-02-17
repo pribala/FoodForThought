@@ -37,6 +37,8 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
     }
 
     async componentDidMount() {
+      console.log(this.props.auth.getUserId());
+       this.setState({userId: this.props.auth.getUserId()});
         try {
             const recipes = await getRecipes(this.props.auth.getIdToken())
             this.setState({
@@ -139,17 +141,30 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
                 </Card.Description>
               </Card.Content>
               <Card.Content extra>
-                <Grid centered columns={3}>
-                  <Grid.Column>
-                    <Icon name='thumbs up' color='green' onClick={() => this.onLike(pos)}/>
-                  </Grid.Column>
+                { this.state.userId != recipe.userId ?
+                (
+                  <Grid centered columns={3}>
+                    <Grid.Column>
+                      <Icon name='thumbs up' color='green' onClick={() => this.onLike(pos)}/>
+                    </Grid.Column>
+                    <Grid.Column>
+                      {recipe.likes} Likes
+                    </Grid.Column>
+                    <Grid.Column>
+                      <Icon name='thumbs down' color='red' onClick={() => this.onUnLike(pos)}/>
+                    </Grid.Column>
+                  </Grid>
+                ) : 
+                (
+                  <Grid centered columns={1}>
+                 
                   <Grid.Column>
                     {recipe.likes} Likes
                   </Grid.Column>
-                  <Grid.Column>
-                    <Icon name='thumbs down' color='red' onClick={() => this.onUnLike(pos)}/>
-                  </Grid.Column>
-                </Grid> 
+                 
+                  </Grid>
+                ) 
+              }
               </Card.Content>
             </Card>
           )

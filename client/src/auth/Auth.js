@@ -5,6 +5,7 @@ export default class Auth {
   accessToken;
   idToken;
   expiresAt;
+  userId;
 
   auth0 = new auth0.WebAuth({
     domain: authConfig.domain,
@@ -24,6 +25,7 @@ export default class Auth {
     this.getAccessToken = this.getAccessToken.bind(this);
     this.getIdToken = this.getIdToken.bind(this);
     this.renewSession = this.renewSession.bind(this);
+    this.getUserId = this.getUserId.bind(this);
   }
 
   login() {
@@ -52,6 +54,10 @@ export default class Auth {
     return this.idToken;
   }
 
+  getUserId() {
+    return this.userId;
+  }
+
   setSession(authResult) {
     // Set isLoggedIn flag in localStorage
     localStorage.setItem('isLoggedIn', 'true');
@@ -61,6 +67,7 @@ export default class Auth {
     this.accessToken = authResult.accessToken;
     this.idToken = authResult.idToken;
     this.expiresAt = expiresAt;
+    this.userId = authResult.idTokenPayload.sub;
 
     // navigate to the home route
     this.history.replace('/');
