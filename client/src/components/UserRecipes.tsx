@@ -2,7 +2,8 @@ import * as React from 'react'
 import { History } from 'history'
 import Auth from '../auth/Auth'
 import { Recipe } from '../types/Recipe'
-import { getUserRecipes, deleteRecipe, addRecipe } from '../api/recipes-api'
+import { getUserRecipes, deleteRecipe, addRecipe, patchRecipe } from '../api/recipes-api'
+import update from 'immutability-helper'
 
 import {
     Button,
@@ -33,14 +34,17 @@ interface RecipeState {
     title: string
     category: string | number | boolean | (string | number | boolean)[] | undefined
     description: string | number | undefined
+    disableSubmit: boolean
+    disableUpdate: boolean
+    position: number
 }
 
 const categoryOptions = [
-    { key: 'veg', value: 'vegetarian', text: 'Vegetarian' },
-    { key: 'vgn', value: 'vegan', text: 'Vegan' },
-    { key: 'ple', value: 'paleo', text: 'Paleo' },
-    { key: 'nvg', value: 'non-vegetarian', text: 'Non-Vegetarian' },
-    { key: 'glf', value: 'gluten-free', text: 'Gluten-Free' },
+    { key: 'veg', value: 'Vegetarian', text: 'Vegetarian' },
+    { key: 'vgn', value: 'Vegan', text: 'Vegan' },
+    { key: 'ple', value: 'Paleo', text: 'Paleo' },
+    { key: 'nvg', value: 'Non-vegetarian', text: 'Non-Vegetarian' },
+    { key: 'glf', value: 'Gluten-free', text: 'Gluten-Free' },
 ]
 
 export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
@@ -49,7 +53,10 @@ export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
       loadingRecipes: true,
       title: '',
       category: '',
-      description: ''
+      description: '',
+      disableSubmit: false,
+      disableUpdate: true,
+      position: 0
     }
 
     async componentDidMount() {
@@ -57,10 +64,13 @@ export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
             const recipes = await getUserRecipes(this.props.auth.getIdToken())
             this.setState({
             recipes,
-            loadingRecipes: false
+            loadingRecipes: false,
+            disableSubmit: false,
+            disableUpdate: true,
+            position: 0
             })
         } catch (e) {
-            alert(`Failed to fetch todos: ${e.message}`)
+            alert(`Failed to fetch recipes: ${e.message}`)
         }
     } 
 
@@ -80,6 +90,56 @@ export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
         this.props.history.push(`/recipes/${recipeId}/edit`)
     }
 
+    onUpdateClick = (pos: number) => {
+        console.log(pos);
+        const recipe = this.state.recipes[pos];
+        console.log(recipe);
+        this.setState({
+            title: recipe.title,
+            category: recipe.category,
+            description: recipe.description,
+            disableSubmit: true,
+            disableUpdate: false,
+            position: pos
+        })
+    }
+
+    handleUpdate = async (event: React.SyntheticEvent) => {
+        event.preventDefault();
+        const recipe = this.state.recipes[this.state.position];
+      
+        try {
+         const newRecipe =  await patchRecipe(this.props.auth.getIdToken(), recipe.recipeId, {
+                category: this.state.category,
+                description: this.state.description,
+                likes: 0,
+                unlike: 0
+            })
+            this.setState({
+                recipes: update(this.state.recipes, {
+                    [this.state.position]: { category: { $set: newRecipe.category }, 
+                    description: { $set: newRecipe.description}}
+                }),
+                title: '',
+                category: '',
+                description: '',
+                position: 0,
+                disableUpdate: true,
+                disableSubmit: false
+            })
+        } catch {
+            alert('Recipe updation failed')
+            this.setState({
+                title: '',
+                category: '',
+                description: '',
+                position: 0,
+                disableUpdate: true,
+                disableSubmit: false
+            })
+        }
+    }
+
     handleSubmit = async (event: React.SyntheticEvent) => {
         event.preventDefault()
         try {
@@ -97,6 +157,17 @@ export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
         } catch {
             alert('Recipe creation failed')
         }
+    }
+
+    handleClear = () => {
+        this.setState({
+            title: '',
+            category: '',
+            description: '',
+            position: 0,
+            disableUpdate: true,
+            disableSubmit: false
+        })
     }
 
     handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,6 +225,9 @@ export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
                     )}
                     <Card.Content>
                         <Card.Header>{recipe.title}</Card.Header>
+                        <Card.Meta>
+                            <span>{recipe.category}</span>
+                        </Card.Meta>
                         <Card.Description>
                         {recipe.description}
                         </Card.Description>
@@ -161,16 +235,16 @@ export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
                     <Card.Content extra>
                         <Grid columns='3'>
                             <Grid.Column>
-                                <Icon name='thumbs up' color='red' />
-                                {recipe.likes} Likes
+                                <Icon name='edit' color='green' onClick={() => this.onUpdateClick(pos)}/>
+                                Edit  
                             </Grid.Column>
                             <Grid.Column>    
                                 <Icon name='trash' color='red' onClick={() => this.deleteRecipeHandler(recipe.recipeId)}/>
                                 Delete  
                             </Grid.Column>
                             <Grid.Column>    
-                                <Icon name='edit' color='green' onClick={() => this.onEditButtonClick(recipe.recipeId)}/>
-                                Edit  
+                                <Icon name='file image outline' color='orange' onClick={() => this.onEditButtonClick(recipe.recipeId)}/>
+                                Image  
                             </Grid.Column>
                         </Grid>
                     </Card.Content>
@@ -197,7 +271,9 @@ export class UserRecipes extends React.PureComponent<RecipeProps, RecipeState> {
                     <label>Description</label>
                     <TextArea placeholder='Recipe...' style={{ minHeight: 100 }} onChange={this.handleDesChange} value={this.state.description}/>
                 </Form.Field>
-            <Button type='submit' onClick={this.handleSubmit}>Submit</Button>
+            <Button type='submit' disabled={this.state.disableSubmit} onClick={this.handleSubmit}>Submit</Button>
+            <Button disabled={this.state.disableUpdate} onClick={this.handleUpdate}>Update</Button>
+            <Button onClick={this.handleClear}>Reset</Button>
           </Form>
           
         );

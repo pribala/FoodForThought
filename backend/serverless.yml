@@ -94,7 +94,51 @@ functions:
         Action:
           - dynamodb:PutItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}
-
+  
+  # Update recipe
+  UpdateRecipe:
+    handler: src/lambda/http/updateRecipe.handler
+    events:
+      - http:
+          method: patch
+          path: recipes/{recipeId}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:Query
+          - dynamodb:GetItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}  
+      - Effect: Allow
+        Action:
+         - dynamodb:Query
+         - dynamodb:GetItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}/index/${self:provider.environment.RECIPE_INDEX}
+  
+  # Like/Unlike recipe
+  LikeUnlikeRecipe:
+    handler: src/lambda/http/likeUnlikeRecipe.handler
+    events:
+      - http:
+          method: patch
+          path: likerecipe/{recipeId}
+          cors: true
+          authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:Query
+          - dynamodb:GetItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}  
+      - Effect: Allow
+        Action:
+         - dynamodb:Query
+         - dynamodb:GetItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.RECIPE_COLLECTION_TABLE}/index/${self:provider.environment.RECIPE_INDEX}      
+  
   # Delete a recipe
   DeleteRecipe:
     handler: src/lambda/http/deleteRecipe.handler

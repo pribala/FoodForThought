@@ -8,7 +8,6 @@ import { LogIn } from './components/LogIn'
 import { NotFound } from './components/NotFound'
 import { Recipes } from './components/Recipes'
 import { EditRecipe } from './components/EditRecipe'
-// export interface AppProps {}
 
 export interface AppProps {
   auth: Auth

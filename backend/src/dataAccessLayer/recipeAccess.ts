@@ -55,46 +55,34 @@ export class RecipeAccess {
         return result.Items as RecipeItem[];
     }
 
-    // async updateTodo(todoItem: TodoItem): Promise<TodoItem> {
-    //     logger.info('Updating an existing to do item.');
-        
-    //     await this.docClient.put({
-    //         TableName: this.todoListTable,
-    //         Item: todoItem
-    //     }).promise();
+    // update a recipe
+    async updateRecipe(recipeItem: RecipeItem): Promise<RecipeItem> {
+        logger.info('Updating an existing recipe.');
+        logger.info(recipeItem);
+        await this.docClient.put({
+            TableName: this.recipeTable,
+            Item: recipeItem
+        }).promise();
 
-    //     return todoItem as TodoItem;
-    // }
+        return recipeItem as RecipeItem;
+    }
 
-    // async  getTodoItem(todoId: string, userId: string): Promise<TodoItem> {
-    //     const result = await this.docClient
-    //     .query({
-    //         TableName: this.todoListTable,
-    //         KeyConditionExpression: 'userId = :userId AND todoId = :todoId',
-    //         ExpressionAttributeValues: {
-    //         ':userId': userId,    
-    //         ':todoId': todoId
-    //         }
-    //     }).promise();
+    // get a recipe item
+    async  getRecipeItem(recipeId: string, userId: string): Promise<RecipeItem> {
+        const result = await this.docClient
+        .query({
+            TableName: this.recipeTable,
+            KeyConditionExpression: 'userId = :userId AND recipeId = :recipeId',
+            ExpressionAttributeValues: {
+            ':userId': userId,    
+            ':recipeId': recipeId
+            }
+        }).promise();
 
-    //     return result.Items[0] as TodoItem;
-    // }
+        return result.Items[0] as RecipeItem;
+    }
 
-    // async itemExists(todoId: string, userId: string): Promise<Boolean> {
-    //     const result = await this.docClient.query({
-    //         TableName: this.todoListTable,
-    //         IndexName: this.imageIdIndex,
-    //         KeyConditionExpression: 'userId = :userId AND todoId = :todoId',
-    //         ExpressionAttributeValues: {
-    //         ':todoId': todoId,
-    //         ':userId': userId
-    //         }
-    //     }).promise();
-    
-    //     logger.info('Check if item is valid.', result);
-    //     return result.Count != 0;
-    // }
-
+   
     // delete a recipe
     async deleteRecipe(userId: string, recipeId: string): Promise<RecipeItem> {
         logger.info(recipeId);
@@ -110,7 +98,8 @@ export class RecipeAccess {
         logger.info('Delete a to do.', result);
         return result[0] as RecipeItem;
     }
-
+    
+    // generate upload url
     async generateUrl(recipeId: string, userId: string) {
         const url = this.getUploadUrl(recipeId)
         // add url to the recipe
@@ -144,6 +133,7 @@ export class RecipeAccess {
     }
 }
 
+// dynamodb client instance
 function createDynamodbClient() {
     logger.info(process.env.IS_OFFLINE)
     if(process.env.IS_OFFLINE == 'true') {

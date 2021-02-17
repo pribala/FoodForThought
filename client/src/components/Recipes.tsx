@@ -2,7 +2,8 @@ import * as React from 'react'
 import { History } from 'history'
 import Auth from '../auth/Auth'
 import { Recipe } from '../types/Recipe'
-import { getRecipes } from '../api/recipes-api'
+import { getRecipes, likeUnlikeRecipe } from '../api/recipes-api'
+import update from 'immutability-helper'
 import {
     Button,
     Checkbox,
@@ -24,14 +25,12 @@ interface RecipeProps {
 
 interface RecipeState {
     recipes: Recipe[]
-   // newTodoName: string
     loadingRecipes: boolean
 }
 
 export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
     state: RecipeState = {
       recipes: [],
-     // newTodoName: '',
       loadingRecipes: true
     }
 
@@ -46,6 +45,51 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
             alert(`Failed to fetch todos: ${e.message}`)
         }
     } 
+
+    onLike = async (pos: number) => {
+      console.log(pos);
+      console.log(this.props.auth.getIdToken())
+      const recipe = this.state.recipes[pos];
+      console.log(recipe);
+      try {
+            await likeUnlikeRecipe(this.props.auth.getIdToken(), recipe.recipeId, {
+                category: recipe.category,
+                description: recipe.description,
+                userId: recipe.userId,
+                likes: 1,
+                unlike: 0
+            })
+            this.setState({
+                recipes: update(this.state.recipes, {
+                    [pos]: { likes: { $set: recipe.likes + 1 }} 
+                }),
+            })
+        } catch {
+            alert('Recipe updation failed')
+        }
+    }
+
+    onUnLike = async (pos: number) => {
+      console.log(pos);
+      const recipe = this.state.recipes[pos];
+      console.log(recipe);
+      try {
+            await likeUnlikeRecipe(this.props.auth.getIdToken(), recipe.recipeId, {
+                category: recipe.category,
+                description: recipe.description,
+                userId: recipe.userId,
+                likes: 0,
+                unlike: 1
+            })
+            this.setState({
+                recipes: update(this.state.recipes, {
+                    [pos]: { likes: { $set: recipe.likes - 1 }} 
+                }),
+            })
+        } catch {
+            alert('Recipe updation failed')
+        }
+    }
     
     render() {
       return (
@@ -85,13 +129,25 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
               )}
               <Card.Content>
                 <Card.Header>{recipe.title}</Card.Header>
+                <Card.Meta>
+                    <span>{recipe.category}</span>
+                </Card.Meta>
                 <Card.Description>
                   {recipe.description}
                 </Card.Description>
               </Card.Content>
               <Card.Content extra>
-                <Icon name='thumbs up' color='red' />
-                  {recipe.likes} Likes
+                <Grid centered columns={3}>
+                  <Grid.Column>
+                    <Icon name='thumbs up' color='green' onClick={() => this.onLike(pos)}/>
+                  </Grid.Column>
+                  <Grid.Column>
+                    {recipe.likes} Likes
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Icon name='thumbs down' color='red' onClick={() => this.onUnLike(pos)}/>
+                  </Grid.Column>
+                </Grid> 
               </Card.Content>
             </Card>
           )

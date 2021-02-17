@@ -1,7 +1,7 @@
 import { RecipeItem } from '../models/RecipeItem';
 import {RecipeAccess} from '../dataAccessLayer/recipeAccess';
 import {CreateRecipeRequest} from '../requests/CreateRecipeRequest';
-// import {UpdatePlanRequest} from '../requests/UpdatePlanRequest';
+import {UpdateRecipeRequest} from '../requests/UpdateRecipeRequest';
 import * as uuid from 'uuid';
 const recipeAccess = new RecipeAccess();
 import { createLogger } from '../utils/logger';
@@ -31,15 +31,29 @@ export async function addRecipe(CreateRecipeRequest: CreateRecipeRequest, userId
   });
 }
 
-// export async function updateToDoItem(UpdateTodoRequest: UpdateTodoRequest, todoId: string, userId: string): Promise<TodoItem> {
-//     const todoItem = await todoAccess.getTodoItem(todoId, userId);
-//     todoItem.name = UpdateTodoRequest.name ? UpdateTodoRequest.name : todoItem.name;
-//     todoItem.done = UpdateTodoRequest.done != todoItem.done ? UpdateTodoRequest.done : todoItem.done;
-//     todoItem.dueDate = UpdateTodoRequest.dueDate != todoItem.dueDate ? UpdateTodoRequest.dueDate : todoItem.dueDate;
-//     return await todoAccess.updateTodo({
-//         ...todoItem
-//    });
-//  }
+export async function updateRecipe(UpdateRecipeRequest: UpdateRecipeRequest, recipeId: string, userId: string): Promise<RecipeItem> {
+    logger.info(UpdateRecipeRequest);
+    const recipeItem = await recipeAccess.getRecipeItem(recipeId, userId);
+    logger.info(recipeItem);
+    recipeItem.description = UpdateRecipeRequest.description ? UpdateRecipeRequest.description : recipeItem.description;
+    recipeItem.category = UpdateRecipeRequest.category ? UpdateRecipeRequest.category : recipeItem.category;
+    recipeItem.likes = recipeItem.likes + UpdateRecipeRequest.likes - UpdateRecipeRequest.unlike;
+    logger.info(recipeItem)
+    return await recipeAccess.updateRecipe({
+        ...recipeItem
+   });
+ }
+
+ export async function likeUnlikeRecipe(UpdateRecipeRequest: UpdateRecipeRequest, recipeId: string): Promise<RecipeItem> {
+  logger.info(UpdateRecipeRequest);
+  const recipeItem = await recipeAccess.getRecipeItem(recipeId, UpdateRecipeRequest.userId);
+  logger.info(recipeItem);
+  recipeItem.likes = recipeItem.likes + UpdateRecipeRequest.likes - UpdateRecipeRequest.unlike;
+  logger.info(recipeItem)
+  return await recipeAccess.updateRecipe({
+      ...recipeItem
+ });
+}
 
 export async function deleteRecipe(userId: string, recipeId: string): Promise<RecipeItem> {
     return recipeAccess.deleteRecipe(userId, recipeId);

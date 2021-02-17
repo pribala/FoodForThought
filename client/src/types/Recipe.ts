@@ -1,10 +1,10 @@
 export interface Recipe {
   recipeId: string
+  userId: string
   title: string
   category: string
   description: string
   likes: number
-  likedBy: string[]
-  dislikedBy: string[]
+  unlike: number
   recipeUrl?: string
 }

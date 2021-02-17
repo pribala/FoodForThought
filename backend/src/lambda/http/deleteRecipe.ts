@@ -4,7 +4,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } f
 import { deleteRecipe } from '../../businessLogic/recipes';
 import { createLogger } from '../../utils/logger';
 import {getUserId} from '../utils';
-const logger = createLogger('todos');
+const logger = createLogger('delete');
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const recipeId = event.pathParameters.recipeId;
   const userId = getUserId(event);

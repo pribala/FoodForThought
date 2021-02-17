@@ -47,13 +47,28 @@ export async function patchRecipe(
   idToken: string,
   recipeId: string,
   updatedRecipe: UpdateRecipeRequest
-): Promise<void> {
-  await Axios.patch(`${apiEndpoint}/recipes/${recipeId}`, JSON.stringify(updatedRecipe), {
+): Promise<Recipe> {
+  const response = await Axios.patch(`${apiEndpoint}/recipes/${recipeId}`, JSON.stringify(updatedRecipe), {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`
     }
   })
+  return response.data.item
+}
+
+export async function likeUnlikeRecipe(
+  idToken: string,
+  recipeId: string,
+  updatedRecipe: UpdateRecipeRequest
+): Promise<Recipe> {
+  const response = await Axios.patch(`${apiEndpoint}/likerecipe/${recipeId}`, JSON.stringify(updatedRecipe), {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${idToken}`
+    }
+  })
+  return response.data.item
 }
 
 export async function deleteRecipe(

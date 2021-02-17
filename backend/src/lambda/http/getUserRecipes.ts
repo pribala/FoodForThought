@@ -4,7 +4,7 @@ import {getUserId} from '../../lambda/utils';
 import { createLogger } from '../../utils/logger';
 import { getUserRecipes } from '../../businessLogic/recipes';
 
-const logger = createLogger('auth');
+const logger = createLogger('user');
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 
