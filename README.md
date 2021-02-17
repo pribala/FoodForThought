@@ -24,7 +24,7 @@ The following functions are configured in the `serverless.yml` file:
 
 * `Auth` - this function implements a custom authorizer for API Gateway that is added to all other functions.
 
-* `GetAllRecipes` - returns all Recipes.
+* `GetAllRecipes` - returns all Recipes. The `scan` method is used to return all recipes added (not specific to any user)
 
 It returns data that looks like this:
 
@@ -52,7 +52,8 @@ It returns data that looks like this:
   ]
 }
 ```
-* `GetUserRecipes` - Recipes for a current user. A user id is extracted from a JWT token that is sent by the frontend
+* `GetUserRecipes` - Recipes for a current user. A user id is extracted from a JWT token that is sent by the frontend.
+`query()` method is used to get recipes for the logged in user using hash and range keys.
 
 * `AddRecipe` - creates a new Recipe for a current user. A shape of data send by a client application to this function can be found in the `CreateRecipeRequest.ts` file
 
