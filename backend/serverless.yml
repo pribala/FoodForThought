@@ -86,9 +86,9 @@ functions:
           path: recipes
           cors: true
           authorizer: Auth
-          #request:
-            #schema:
-              #application/json: ${file(src/models/create-recipe-model.json)}
+          request:
+            schema:
+              application/json: ${file(src/models/add-recipe-model.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:

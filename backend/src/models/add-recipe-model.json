@@ -21,6 +21,9 @@
       "properties":{
           "recipeUrl":{
               "type":"string"
+          },
+          "likes": {
+            "type":"number"
           }
       }
   }
