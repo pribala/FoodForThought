@@ -26,12 +26,14 @@ interface RecipeProps {
 interface RecipeState {
     recipes: Recipe[]
     loadingRecipes: boolean
+    userId: string
 }
 
 export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
     state: RecipeState = {
       recipes: [],
-      loadingRecipes: true
+      loadingRecipes: true,
+      userId: ''
     }
 
     async componentDidMount() {
@@ -90,7 +92,7 @@ export class Recipes extends React.PureComponent<RecipeProps, RecipeState> {
             alert('Recipe updation failed')
         }
     }
-    
+
     render() {
       return (
         <div>
